@@ -1,10 +1,6 @@
 ---
 - name: Build Image
   hosts: bastion
-  collections:
-    - infra.osbuild
-    - ansible.posix
-    - containers.podman
 
   tasks:
   - name: increment number in file
