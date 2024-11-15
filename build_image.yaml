@@ -1,6 +1,6 @@
 ---
 - name: Build Image
-  hosts: all
+  hosts: bastion
 
   tasks:
   - name: increment number in file
