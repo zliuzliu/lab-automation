@@ -74,3 +74,6 @@
     ansible.builtin.file:
       path: "/home/edge/{{ start_compose_result.result.body.build_id }}-container.tar"
       state: absent
+
+  - name: Delete compose
+    shell: composer-cli compose delete "{{ start_compose_result.result.body.build_id }}"
