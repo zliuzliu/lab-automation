@@ -18,6 +18,9 @@
 
   - name: Check Status
     shell: rpm-ostree status
+    register: status_out
+
+  - debug: var=status_out
 
   - name: Reboot
     shell: systemctl reboot
