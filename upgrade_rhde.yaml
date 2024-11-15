@@ -1,6 +1,6 @@
 ---
 - name: Upgrade Device Edge
-  hosts: all
+  hosts: edge_servers
 
   tasks:
   - name: Check Status
