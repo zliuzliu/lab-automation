@@ -1,0 +1,19 @@
+---
+- name: Upgrade Device Edge
+  hosts: all
+
+  tasks:
+  - name: Check Status
+    shell: rpm-ostree status
+
+  - name: Check Upgrade
+    shell: rpm-ostree upgrade --check
+
+  - name: Upgrade
+    shell: rpm-ostree upgrade
+
+  - name: Check Status
+    shell: rpm-ostree status
+
+  - name: Reboot
+    shell: systemctl reboot
