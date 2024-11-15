@@ -1,0 +1,71 @@
+---
+- name: Build Image
+  hosts: all
+
+  tasks:
+  - name: increment number in file
+    shell: /home/edge/automation/version.sh
+
+  - name: Get list of blueprints
+    infra.osbuild.list_blueprints:
+    register: list_blueprints_out
+
+  - debug: var=list_blueprints_out
+
+  - name: Push the blueprint
+    shell: composer-cli blueprints push /home/edge/rhde-microshift.toml
+
+  - name: Start ostree compose with idempotent transaction
+    infra.osbuild.start_compose:
+      blueprint: rhde-microshift
+      allow_duplicate: true
+      ostree_ref: rhel/9/$(uname -m)/edge
+      compose_type: edge-container
+    register: start_compose_result
+
+  - set_fact:
+      build_id: "{{ start_compose_result.result.body.build_id }}"
+
+  - debug: var=build_id
+
+  - name: Wait for compose to complete
+    infra.osbuild.wait_compose:
+      compose_id: "{{ start_compose_result.result.body.build_id }}"
+      timeout: 3600
+    register: wait_compose_result
+
+  - set_fact:
+      queue_status: "{{ wait_compose_result.result.queue_status }}"
+
+  - debug: var=queue_status
+
+  - name: Export RHEL for Edge compose
+    infra.osbuild.export_compose:
+      compose_id: "{{ start_compose_result.result.body.build_id }}"
+      dest: "/home/edge/{{ start_compose_result.result.body.build_id }}-container.tar"
+
+  - name: Change image ownership
+    ansible.builtin.file:
+      path: "/home/edge/{{ start_compose_result.result.body.build_id }}-container.tar"
+      owner: edge
+      group: edge
+      mode: '0644'
+
+  - name: Load the image from tar file
+    containers.podman.podman_load:
+      input: "/home/edge/{{ start_compose_result.result.body.build_id }}-container.tar"
+    register: podman_load_result
+
+  - set_fact:
+      image_id: "{{ podman_load_result.image.Id }}"
+
+  - debug: var=image_id
+
+  - name: Run container
+    containers.podman.podman_container:
+      name: minimal-microshift-server
+      image: "{{ podman_load_result.image.Id }}"
+      recreate: true
+      ports:
+          - "8085:8080"
+      state: started
