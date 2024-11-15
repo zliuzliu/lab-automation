@@ -1,5 +1,5 @@
 ---
 collections:
-  - infra.osbuild
-  - ansible.posix
-  - containers.podman
+- infra.osbuild
+- ansible.posix
+- containers.podman
