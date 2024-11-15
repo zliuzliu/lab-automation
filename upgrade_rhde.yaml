@@ -1,7 +1,6 @@
 ---
 - name: Upgrade Device Edge
-  hosts: edge_servers
-
+  hosts: all
   tasks:
   - name: Check Status
     shell: rpm-ostree status
