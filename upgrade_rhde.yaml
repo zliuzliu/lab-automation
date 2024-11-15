@@ -23,4 +23,4 @@
   - debug: var=status_out
 
   - name: Reboot
-    shell: systemctl reboot
+    ansible.builtin.reboot:
