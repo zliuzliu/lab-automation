@@ -69,3 +69,8 @@
       ports:
           - "8085:8080"
       state: started
+
+  - name: Remove file (delete file)
+    ansible.builtin.file:
+      path: "/home/edge/{{ start_compose_result.result.body.build_id }}-container.tar"
+      state: absent
