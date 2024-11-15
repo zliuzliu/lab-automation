@@ -11,7 +11,7 @@
 
   - name: Upgrade the rpm-ostree image allowing downgrades
     ansible.posix.rpm_ostree_upgrade:
-      allow_downgrade: true
+      allow_downgrade: false
 
   - name: Check Status
     shell: rpm-ostree status
