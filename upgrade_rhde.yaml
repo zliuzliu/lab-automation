@@ -7,7 +7,7 @@
     shell: rpm-ostree status
     register: status_out
 
-  - debug: status_out
+  - debug: var=status_out
 
   - name: Check Upgrade
     shell: rpm-ostree upgrade --check
